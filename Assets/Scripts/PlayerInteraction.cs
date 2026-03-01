@@ -16,6 +16,9 @@ public class PlayerInteraction : MonoBehaviour
 
     [SerializeField]
     float distance = 5.0f;
+
+    [SerializeField]
+    Transform bagSlot;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     void Start()
@@ -43,17 +46,33 @@ public class PlayerInteraction : MonoBehaviour
 
                 if (Input.GetKeyDown(KeyCode.E))
                 {
+                    if(hit.collider.name == "Bag")
+                    {
+                        clone = hit.collider.gameObject;
+                        Item = clone;
 
-                    clone = Instantiate(hit.collider.gameObject);
-                    Item = hit.collider.gameObject;
+                        clone.transform.SetPositionAndRotation(holdPoint.transform.position, holdPoint.transform.rotation);
 
-                    clone.transform.SetPositionAndRotation(holdPoint.transform.position, holdPoint.transform.rotation);
+                        clone.transform.SetParent(holdPoint);
 
-                    clone.transform.SetParent(holdPoint);
+                    }
+                    else
+                    {
+                        clone = Instantiate(hit.collider.gameObject);
+                        Item = hit.collider.gameObject;
 
+                        clone.transform.SetPositionAndRotation(holdPoint.transform.position, holdPoint.transform.rotation);
+
+                        clone.transform.SetParent(holdPoint);
+
+ 
+
+                    }
                 }
+
             }
-            if (Item != null)
+        }
+        if (Item != null)
             {
                 if (Input.GetKeyDown(KeyCode.Q) && clone.transform.parent == holdPoint)
                 {
@@ -64,10 +83,17 @@ public class PlayerInteraction : MonoBehaviour
                     rb.isKinematic = false;
                     Item = null;
                 }
+                if (Input.GetKeyDown(KeyCode.E) && hit.collider.name == "Bag" && Item.name != "Bag")
+                {
+                    clone.transform.SetParent(bagSlot);
+                    Destroy(clone.GetComponent<Collider>());
+                    Destroy(clone.GetComponent<MeshRenderer>());
+
+
+
+                    Item = null;
+                }
             }
-
-
-        }
 
 
     }
